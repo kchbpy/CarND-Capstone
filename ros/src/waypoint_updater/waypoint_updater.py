@@ -89,6 +89,8 @@ class WaypointUpdater(object):
             lane.waypoints = base_waypoints
         else:
             lane.waypoints = self.decelerate_waypoints(base_waypoints, closest_idx)
+
+        # Limit the number of waypoints to be published for the performance.
         lane.waypoints = lane.waypoints[:PUBLISH_WPS]
         return lane
 
