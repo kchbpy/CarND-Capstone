@@ -89,7 +89,7 @@ class WaypointUpdater(object):
             lane.waypoints = base_waypoints
         else:
             lane.waypoints = self.decelerate_waypoints(base_waypoints, closest_idx)
-        lane.waypoints = lane.waypoints[:closest_idx + PUBLISH_WPS]
+        lane.waypoints = lane.waypoints[:PUBLISH_WPS]
         return lane
 
     def decelerate_waypoints(self, waypoints, closest_idx):
