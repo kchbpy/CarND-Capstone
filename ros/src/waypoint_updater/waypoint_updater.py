@@ -58,10 +58,9 @@ class WaypointUpdater(object):
             rate.sleep()
 
     def get_closest_waypoint_idx(self):
-        rospy.loginfo('get_closest_waypoint_idx')
+        ('get_closest_waypoint_idx')
         x = self.pose.pose.position.x
         y = self.pose.pose.position.y
-        rospy.loginfo('pose (x,y)= {},{}'.format(x,y))
         closest_idx = self.waypoint_tree.query([x, y], 1)[1]
 
         closest_pt = self.waypoints_2d[closest_idx]
@@ -74,7 +73,6 @@ class WaypointUpdater(object):
         val = np.dot(closest_vect - prev_vect, car_vect - closest_vect)
         if val > 0:
             closest_idx = (closest_idx + 1) % len(self.waypoints_2d)
-        rospy.loginfo('closest_idx = {}'.format(closest_idx))
         return closest_idx
 
     def publish_waypoints(self, closest_idx):
@@ -108,12 +106,11 @@ class WaypointUpdater(object):
         return temp
 
     def pose_cb(self, msg):
-        rospy.loginfo('pose_cb: {}'.format(msg))
+        ('pose_cb: {}'.format(msg))
         self.pose = msg
 
     def waypoints_cb(self, waypoints):
         # TODO: Implement
-        rospy.loginfo('waypoints_cb')
         self.base_waypoints = waypoints
         if not self.waypoints_2d:
             self.waypoints_2d = [
