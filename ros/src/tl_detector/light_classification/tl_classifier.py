@@ -44,7 +44,7 @@ class TLClassifier(object):
                 detection_classes = self.detection_graph.get_tensor_by_name('detection_classes:0')
                 num_detections = self.detection_graph.get_tensor_by_name('num_detections:0')
 
-                rospy.loginfo('image.shape: ', image.shape)
+                rospy.loginfo('image.shape: {}'.format(image.shape))
                 # Convert image format.
                 # image_np = load_image_into_numpy_array(image)
                 # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
