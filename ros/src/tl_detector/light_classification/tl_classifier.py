@@ -64,7 +64,7 @@ class TLClassifier(object):
                     format(len(boxes),len(scores), len(classes)))
                 green_score = 0 # id=1
                 red_score = 0 # id=2
-                yellow_score = 0 # id =3
+                yellow_score = 0 # id=3
                 detected = False
 
                 # FIXME: Imporve logic.
@@ -82,6 +82,7 @@ class TLClassifier(object):
 
                 if detected:
                     sums = np.array([green_score, red_score, yellow_score])
+                    rospy.loginfo('sums: {}'.format(sums))
                     idx = np.argsort(sums)[-1]
                     rospy.loginfo('detected light idx: {}'.format(idx))
 
