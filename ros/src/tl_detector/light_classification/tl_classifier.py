@@ -58,6 +58,9 @@ class TLClassifier(object):
                 scores = np.squeeze(scores)
                 classes = np.squeeze(classes).astype(np.int32)
 
+                rospy.loginfo(
+                    'num boxes: {} num scores: {} num classes: {}'.
+                    format(len(boxes),len(scores), len(classes)))
                 green_score = 0 # id=1
                 red_score = 0 # id=2
                 yellow_score = 0 # id =3
@@ -76,6 +79,7 @@ class TLClassifier(object):
                         none_score = none_score + score
                 scores = np.array([green_score, red_score, yellow_score, none_score])
                 idx = np.argsort(scores)[-1]
+                rospy.loginfo('detected light idx: {}'.format(idx))
 
                 if idx == 0:
                     return TrafficLight.GREEN
