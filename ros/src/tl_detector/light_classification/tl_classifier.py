@@ -10,7 +10,7 @@ def load_image_into_numpy_array(image):
 class TLClassifier(object):
     def __init__(self):
         self.detection_graph = tf.Graph()
-        graph_path = './frozen_inference_graph.pb'
+        graph_path = './graph/frozen_inference_graph.pb'
         with self.detection_graph.as_default():
             od_graph_def = tf.GraphDef()
             with tf.gfile.GFile(graph_path, 'rb') as fid:
