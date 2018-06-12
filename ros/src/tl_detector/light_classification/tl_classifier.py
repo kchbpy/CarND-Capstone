@@ -70,6 +70,7 @@ class TLClassifier(object):
                 for i, cl in enumerate(classes):
                     score = scores[i]
                     if score > 0.5:
+                        rospy.loginfo('cl: {}'.format(cl))
                         if cl is 1:
                             green_score = green_score + score
                         if cl is 2:
