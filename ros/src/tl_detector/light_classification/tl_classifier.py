@@ -65,11 +65,13 @@ class TLClassifier(object):
                 green_score = 0 # id=1
                 red_score = 0 # id=2
                 yellow_score = 0 # id =3
+                detected = False
 
                 # FIXME: Imporve logic.
                 for i, cl in enumerate(classes):
                     score = scores[i]
                     if score > 0.5:
+                        detected = True
                         rospy.loginfo('cl: {}'.format(cl))
                         if cl is 1:
                             green_score = green_score + score
@@ -77,14 +79,16 @@ class TLClassifier(object):
                             red_score = red_score + score
                         if cl is 3:
                             yellow_score = yellow_score + score
-                scores = np.array([green_score, red_score, yellow_score])
-                idx = np.argsort(scores)[-1]
-                rospy.loginfo('detected light idx: {}'.format(idx))
 
-                if idx == 0:
-                    return TrafficLight.GREEN
-                if idx == 1:
-                    return TrafficLight.RED
-                if idx == 2:
-                    return TrafficLight.YELLOW
+                if detected:
+                    sums = np.array([green_score, red_score, yellow_score])
+                    idx = np.argsort(sums)[-1]
+                    rospy.loginfo('detected light idx: {}'.format(idx))
+
+                    if idx == 0:
+                        return TrafficLight.GREEN
+                    if idx == 1:
+                        return TrafficLight.RED
+                    if idx == 2:
+                        return TrafficLight.YELLOW
         return TrafficLight.UNKNOWN
