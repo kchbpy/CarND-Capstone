@@ -49,6 +49,7 @@ class TLClassifier(object):
                 # image_np = load_image_into_numpy_array(image)
                 # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
                 image_np_expanded = np.expand_dims(image, axis=0)
+                rospy.loginfo('image_np_expanded.shape: {}'.format(image_np_expanded.shape))
 
                 (boxes, scores, classes, num) = sess.run(
                     [detection_boxes, detection_scores, detection_classes, num_detections],
