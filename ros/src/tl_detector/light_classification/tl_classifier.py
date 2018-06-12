@@ -69,12 +69,13 @@ class TLClassifier(object):
                 # FIXME: Imporve logic.
                 for i, cl in enumerate(classes):
                     score = scores[i]
-                    if cl is 1:
-                        green_score = green_score + score
-                    if cl is 2:
-                        red_score = red_score + score
-                    if cl is 3:
-                        yellow_score = yellow_score + score
+                    if score > 0.5:
+                        if cl is 1:
+                            green_score = green_score + score
+                        if cl is 2:
+                            red_score = red_score + score
+                        if cl is 3:
+                            yellow_score = yellow_score + score
                 scores = np.array([green_score, red_score, yellow_score])
                 idx = np.argsort(scores)[-1]
                 rospy.loginfo('detected light idx: {}'.format(idx))
