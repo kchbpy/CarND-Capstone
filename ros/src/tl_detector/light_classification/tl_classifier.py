@@ -1,10 +1,24 @@
 from styx_msgs.msg import TrafficLight
+import numpy as np
+import tensorflow as tf
+
+def load_image_into_numpy_array(image):
+    (im_width, im_height) = image.size
+    return np.array(image.getdata()).reshape(
+        (im_height, im_width, 3)).astype(np.uint8)
 
 class TLClassifier(object):
     def __init__(self):
-        #TODO load classifier
-        pass
+        self.detection_graph = tf.Graph()
+        graph_path = './frozen_inference_graph.pb'
+        with self.detection_graph.as_default():
+            od_graph_def = tf.GraphDef()
+            with tf.gfile.GFile(graph_path, 'rb') as fid:
+                serialized_graph = fid.read()
+                od_graph_def.ParseFromString(serialized_graph)
+                tf.import_graph_def(od_graph_def, name='')
 
+    # expect rgb.
     def get_classification(self, image):
         """Determines the color of the traffic light in the image
 
@@ -15,5 +29,57 @@ class TLClassifier(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
-        #TODO implement light color prediction
+        with self.detection_graph.as_default():
+            with tf.Session(graph=self.detection_graph) as sess:
+                # Definite input and output Tensors for detection_graph
+                image_tensor = self.detection_graph.get_tensor_by_name('image_tensor:0')
+
+                # Each box represents a part of the image where a particular object was detected.
+                detection_boxes = self.detection_graph.get_tensor_by_name('detection_boxes:0')
+
+                # Each score represent how level of confidence for each of the objects.
+                # Score is shown on the result image, together with the class label.
+                detection_scores = self.detection_graph.get_tensor_by_name('detection_scores:0')
+                detection_classes = self.detection_graph.get_tensor_by_name('detection_classes:0')
+                num_detections = self.detection_graph.get_tensor_by_name('num_detections:0')
+
+                # Convert image format.
+                image_np = load_image_into_numpy_array(image)
+                # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
+                image_np_expanded = np.expand_dims(image_np, axis=0)
+
+                (boxes, scores, classes, num) = sess.run(
+                    [detection_boxes, detection_scores, detection_classes, num_detections],
+                    feed_dict={image_tensor: image_np_expanded})
+
+                boxes = np.squeeze(boxes)
+                scores = np.squeeze(scores)
+                classes = np.squeeze(classes).astype(np.int32)
+
+                green_score = 0 # id=1
+                red_score = 0 # id=2
+                yellow_score = 0 # id =3
+                none_score = 0 # id =4
+
+                # FIXME: Imporve logic.
+                for i, cl in enumerate(classes):
+                    score = scores[i]
+                    if cl is 1:
+                        green_score = green_score + score
+                    if cl is 2:
+                        red_score = red_score + score
+                    if cl is 3:
+                        yellow_score = yellow_score + score
+                    if cl is 4:
+                        none_score = none_score + score
+                highest = [green_score, red_score, yellow_score, none_score].sort()[0]
+
+                if highest == 1:
+                    return TrafficLight.GREEN
+                if highest == 2:
+                    return TrafficLight.RED
+                if highest == 3:
+                    return TrafficLight.YELLOW
+                if highest == 4:
+                    return TrafficLight.UNKNOWN
         return TrafficLight.UNKNOWN
