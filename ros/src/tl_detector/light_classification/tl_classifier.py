@@ -3,11 +3,6 @@ import numpy as np
 import tensorflow as tf
 import rospy
 
-def load_image_into_numpy_array(image):
-    (im_width, im_height) = image.size
-    return np.array(image.getdata()).reshape(
-        (im_height, im_width, 3)).astype(np.uint8)
-
 class TLClassifier(object):
     def __init__(self):
         self.detection_graph = tf.Graph()
@@ -44,12 +39,9 @@ class TLClassifier(object):
                 detection_classes = self.detection_graph.get_tensor_by_name('detection_classes:0')
                 num_detections = self.detection_graph.get_tensor_by_name('num_detections:0')
 
-                rospy.loginfo('image.shape: {}'.format(image.shape))
                 # Convert image format.
-                # image_np = load_image_into_numpy_array(image)
                 # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
                 image_np_expanded = np.expand_dims(image, axis=0)
-                rospy.loginfo('image_np_expanded.shape: {}'.format(image_np_expanded.shape))
 
                 (boxes, scores, classes, num) = sess.run(
                     [detection_boxes, detection_scores, detection_classes, num_detections],
@@ -59,9 +51,6 @@ class TLClassifier(object):
                 scores = np.squeeze(scores)
                 classes = np.squeeze(classes).astype(np.int32)
 
-                rospy.loginfo(
-                    'num boxes: {} num scores: {} num classes: {}'.
-                    format(len(boxes),len(scores), len(classes)))
                 green_score = 0 # id=1
                 red_score = 0 # id=2
                 yellow_score = 0 # id=3
@@ -71,7 +60,6 @@ class TLClassifier(object):
                 for cl, score in zip(classes, scores):
                     if score > 0.5:
                         detected = True
-                        rospy.loginfo('cl: {}'.format(cl))
                         if cl == 1:
                             green_score = green_score + score
                         if cl == 2:
@@ -81,7 +69,6 @@ class TLClassifier(object):
 
                 if detected:
                     sums = np.array([green_score, red_score, yellow_score])
-                    rospy.loginfo('sums: {}'.format(sums))
                     idx = np.argsort(sums)[-1]
                     rospy.loginfo('detected light idx: {}'.format(idx))
 
