@@ -1,6 +1,7 @@
 from styx_msgs.msg import TrafficLight
 import numpy as np
 import tensorflow as tf
+import rospy
 
 def load_image_into_numpy_array(image):
     (im_width, im_height) = image.size
@@ -43,10 +44,11 @@ class TLClassifier(object):
                 detection_classes = self.detection_graph.get_tensor_by_name('detection_classes:0')
                 num_detections = self.detection_graph.get_tensor_by_name('num_detections:0')
 
+                rospy.loginfo('image.shape: ', image.shape)
                 # Convert image format.
-                image_np = load_image_into_numpy_array(image)
+                # image_np = load_image_into_numpy_array(image)
                 # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
-                image_np_expanded = np.expand_dims(image_np, axis=0)
+                image_np_expanded = np.expand_dims(image, axis=0)
 
                 (boxes, scores, classes, num) = sess.run(
                     [detection_boxes, detection_scores, detection_classes, num_detections],
