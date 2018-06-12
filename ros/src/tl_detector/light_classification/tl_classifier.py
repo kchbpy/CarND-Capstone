@@ -72,14 +72,15 @@ class TLClassifier(object):
                         yellow_score = yellow_score + score
                     if cl is 4:
                         none_score = none_score + score
-                highest = [green_score, red_score, yellow_score, none_score].sort()[0]
+                scores = np.array([green_score, red_score, yellow_score, none_score])
+                idx = np.argsort(scores)[-1]
 
-                if highest == 1:
+                if idx == 0:
                     return TrafficLight.GREEN
-                if highest == 2:
+                if idx == 1:
                     return TrafficLight.RED
-                if highest == 3:
+                if idx == 2:
                     return TrafficLight.YELLOW
-                if highest == 4:
+                if idx == 3:
                     return TrafficLight.UNKNOWN
         return TrafficLight.UNKNOWN
