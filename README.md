@@ -29,6 +29,8 @@ Details of training with traffic light data in simulator is described in the [re
 
 ### TODOs
 
+Inference is tested in this [notebook](https://github.com/satoshikumano/traffic-light-detection-fh/blob/master/TrafficLightDetection-Inference.ipynb).
+
 - Accuracy is not enough.
   - Increase training data/ validation data.
   - Data augmentation.
